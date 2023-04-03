@@ -12,16 +12,18 @@ import {
   LogOutButton,
   WorkspaceButton,
   AddButton,
+  WorkspaceModal,
 } from '@layouts/Workspace/styles';
 
 import loadable from '@loadable/component';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
+import CreateChannelModal from '@components/CreateChannelModal';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
-import React, { FC, useCallback, useState, useEffect } from 'react';
+import React, { VFC, useCallback, useState, useEffect } from 'react';
 import { Redirect, useParams } from 'react-router';
 import { Link, Route, Switch } from 'react-router-dom';
 import useSWR from 'swr';
@@ -33,9 +35,11 @@ import 'react-toastify/dist/ReactToastify.css';
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
-const Workspace: FC = () => {
+const Workspace: VFC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
   const {
@@ -92,6 +96,15 @@ const Workspace: FC = () => {
 
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
+  }, []);
+
+  const toggleWorkspaceModal = useCallback(() => {
+    setShowWorkspaceModal((prev) => !prev);
+  }, []);
+
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
   }, []);
 
   if (!userData) {
@@ -125,7 +138,7 @@ const Workspace: FC = () => {
         <Workspaces>
           {userData?.Workspaces.map((ws) => {
             return (
-              <Link key={ws.id} to={`/workspace/${123}/channel/일반`}>
+              <Link key={ws.id} to={`/workspace/${ws.name}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
               </Link>
             );
@@ -133,8 +146,17 @@ const Workspace: FC = () => {
           <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll>menu scroll</MenuScroll>
+          <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
+          <MenuScroll>
+            <Menu style={{ top: 95, left: 80 }} show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal}>
+              <WorkspaceModal>
+                <h2>Sleact</h2>
+                {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button> */}
+                <button onClick={onClickAddChannel}>채널 만들기</button>
+                <button onClick={onLogOut}>로그아웃</button>
+              </WorkspaceModal>
+            </Menu>
+          </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
@@ -156,6 +178,11 @@ const Workspace: FC = () => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+      <CreateChannelModal
+        show={showCreateChannelModal}
+        onCloseModal={onCloseModal}
+        setShowCreateChannelModal={setShowCreateChannelModal}
+      />
       <ToastContainer position="bottom-center" />
     </div>
   );
