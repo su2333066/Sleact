@@ -19,6 +19,8 @@ import loadable from '@loadable/component';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
 import CreateChannelModal from '@components/CreateChannelModal';
+import InviteChannelModal from '@components/InviteChannelModal';
+import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import { IUser, IChannel } from '@typings/db';
@@ -38,6 +40,8 @@ const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 const Workspace: VFC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false);
+  const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
@@ -99,6 +103,8 @@ const Workspace: VFC = () => {
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
     setShowCreateChannelModal(false);
+    setShowInviteWorkspaceModal(false);
+    setShowInviteChannelModal(false);
   }, []);
 
   const toggleWorkspaceModal = useCallback(() => {
@@ -107,6 +113,10 @@ const Workspace: VFC = () => {
 
   const onClickAddChannel = useCallback(() => {
     setShowCreateChannelModal(true);
+  }, []);
+
+  const onClickInviteWorkspace = useCallback(() => {
+    setShowInviteWorkspaceModal(true);
   }, []);
 
   if (!userData) {
@@ -148,12 +158,14 @@ const Workspace: VFC = () => {
           <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
+          <WorkspaceName onClick={toggleWorkspaceModal}>
+            {userData?.Workspaces.find((ws) => ws.name === workspace)?.name}
+          </WorkspaceName>
           <MenuScroll>
             <Menu style={{ top: 95, left: 80 }} show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal}>
               <WorkspaceModal>
-                <h2>Sleact</h2>
-                {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button> */}
+                <h2>{userData?.Workspaces.find((ws) => ws.name === workspace)?.name}</h2>
+                <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
                 <button onClick={onClickAddChannel}>채널 만들기</button>
                 <button onClick={onLogOut}>로그아웃</button>
               </WorkspaceModal>
@@ -188,6 +200,16 @@ const Workspace: VFC = () => {
         show={showCreateChannelModal}
         onCloseModal={onCloseModal}
         setShowCreateChannelModal={setShowCreateChannelModal}
+      />
+      <InviteWorkspaceModal
+        show={showInviteWorkspaceModal}
+        onCloseModal={onCloseModal}
+        setShowInviteWorkspaceModal={setShowInviteWorkspaceModal}
+      />
+      <InviteChannelModal
+        show={showInviteChannelModal}
+        onCloseModal={onCloseModal}
+        setShowInviteChannelModal={setShowInviteChannelModal}
       />
       <ToastContainer position="bottom-center" />
     </div>
