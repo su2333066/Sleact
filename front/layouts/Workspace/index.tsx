@@ -21,6 +21,8 @@ import Modal from '@components/Modal';
 import CreateChannelModal from '@components/CreateChannelModal';
 import InviteChannelModal from '@components/InviteChannelModal';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
+import ChannelList from '@components/ChannelList';
+import DMList from '@components/DMList';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import { IUser, IChannel } from '@typings/db';
@@ -55,7 +57,10 @@ const Workspace: VFC = () => {
     revalidate,
     mutate,
   } = useSWR<IUser | false>('/api/users', fetcher, { dedupingInterval: 2000 /* 2초 */ });
+
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
+
+  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   const onLogOut = useCallback(() => {
     axios
@@ -170,9 +175,8 @@ const Workspace: VFC = () => {
                 <button onClick={onLogOut}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {channelData?.map((v) => (
-              <div>{v.name}</div>
-            ))}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>
