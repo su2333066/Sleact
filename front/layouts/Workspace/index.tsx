@@ -1,40 +1,40 @@
 import {
-  Header,
-  RightMenu,
-  ProfileImg,
-  WorkspaceWrapper,
-  Workspaces,
+  AddButton,
   Channels,
   Chats,
-  WorkspaceName,
-  MenuScroll,
-  ProfileModal,
+  Header,
   LogOutButton,
+  MenuScroll,
+  ProfileImg,
+  ProfileModal,
+  RightMenu,
   WorkspaceButton,
-  AddButton,
   WorkspaceModal,
+  WorkspaceName,
+  WorkspaceWrapper,
+  Workspaces,
 } from '@layouts/Workspace/styles';
 
-import loadable from '@loadable/component';
-import Menu from '@components/Menu';
-import Modal from '@components/Modal';
+import ChannelList from '@components/ChannelList';
 import CreateChannelModal from '@components/CreateChannelModal';
+import DMList from '@components/DMList';
 import InviteChannelModal from '@components/InviteChannelModal';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
-import ChannelList from '@components/ChannelList';
-import DMList from '@components/DMList';
-import { Button, Input, Label } from '@pages/SignUp/styles';
+import Menu from '@components/Menu';
+import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
-import { IUser, IChannel } from '@typings/db';
+import loadable from '@loadable/component';
+import { Button, Input, Label } from '@pages/SignUp/styles';
+import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
-import React, { VFC, useCallback, useState, useEffect } from 'react';
-import { Redirect, useParams } from 'react-router';
-import { Link, Route, Switch } from 'react-router-dom';
-import useSWR from 'swr';
 import axios from 'axios';
 import gravatar from 'gravatar';
+import React, { VFC, useCallback, useState } from 'react';
+import { Redirect, useParams } from 'react-router';
+import { Link, Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useSWR from 'swr';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
