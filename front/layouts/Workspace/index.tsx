@@ -35,6 +35,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useSWR from 'swr';
+import useSocket from '@typings/useSocket';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -59,8 +60,8 @@ const Workspace: VFC = () => {
   } = useSWR<IUser | false>('/api/users', fetcher, { dedupingInterval: 2000 /* 2초 */ });
 
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
-
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const [socket, disconnect] = useSocket(workspace);
 
   const onLogOut = useCallback(() => {
     axios
