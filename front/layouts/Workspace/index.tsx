@@ -101,10 +101,16 @@ const Workspace: VFC = () => {
       if (!newWorkspace || !newWorkspace.trim()) return;
       if (!newUrl || !newUrl.trim()) return;
       axios
-        .post('/api/workspaces', {
-          workspace: newWorkspace,
-          url: newUrl,
-        })
+        .post(
+          '/api/workspaces',
+          {
+            workspace: newWorkspace,
+            url: newUrl,
+          },
+          {
+            withCredentials: true,
+          },
+        )
         .then(() => {
           revalidate();
           setShowCreateWorkspaceModal(false);
@@ -165,11 +171,12 @@ const Workspace: VFC = () => {
           </RightMenu>
         )}
       </Header>
+
       <WorkspaceWrapper>
         <Workspaces>
           {userData?.Workspaces.map((ws) => {
             return (
-              <Link key={ws.id} to={`/workspace/${ws.name}/channel/일반`}>
+              <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
               </Link>
             );
@@ -178,12 +185,12 @@ const Workspace: VFC = () => {
         </Workspaces>
         <Channels>
           <WorkspaceName onClick={toggleWorkspaceModal}>
-            {userData?.Workspaces.find((ws) => ws.name === workspace)?.name}
+            {userData?.Workspaces.find((v) => v.url === workspace)?.name}
           </WorkspaceName>
           <MenuScroll>
             <Menu style={{ top: 95, left: 80 }} show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal}>
               <WorkspaceModal>
-                <h2>{userData?.Workspaces.find((ws) => ws.name === workspace)?.name}</h2>
+                <h2>{userData?.Workspaces.find((v) => v.url === workspace)?.name}</h2>
                 <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
                 <button onClick={onClickAddChannel}>채널 만들기</button>
                 <button onClick={onLogOut}>로그아웃</button>
@@ -214,21 +221,25 @@ const Workspace: VFC = () => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+
       <CreateChannelModal
         show={showCreateChannelModal}
         onCloseModal={onCloseModal}
         setShowCreateChannelModal={setShowCreateChannelModal}
       />
+
       <InviteWorkspaceModal
         show={showInviteWorkspaceModal}
         onCloseModal={onCloseModal}
         setShowInviteWorkspaceModal={setShowInviteWorkspaceModal}
       />
+
       <InviteChannelModal
         show={showInviteChannelModal}
         onCloseModal={onCloseModal}
         setShowInviteChannelModal={setShowInviteChannelModal}
       />
+
       <ToastContainer position="bottom-center" />
     </div>
   );
