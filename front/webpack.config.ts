@@ -4,11 +4,11 @@ import webpack, { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
 }
-
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
