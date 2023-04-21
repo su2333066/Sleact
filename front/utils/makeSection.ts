@@ -1,8 +1,8 @@
-import { IDM } from '@typings/db';
+import { IDM, IChat } from '@typings/db';
 import dayjs from 'dayjs';
 
-export default function makeSection(chatList: IDM[]) {
-  const sections: { [key: string]: IDM[] } = {};
+export default function makeSection(chatList: IDM[] | IChat[]) {
+  const sections: { [key: string]: (IDM | IChat)[] } = {};
   console.log(sections);
 
   chatList.forEach((chat) => {
