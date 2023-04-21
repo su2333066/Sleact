@@ -1,10 +1,13 @@
 {
+  "homepage": "https://su2333066.github.io/Sleact/",
   "name": "sleact-ts-front",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --env development",
-    "build": "cross-env NODE_ENV=production webpack"
+    "build": "cross-env NODE_ENV=production webpack",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "GISU",
   "license": "MIT",
@@ -63,6 +66,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.32.2",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "gh-pages": "^5.0.0",
     "prettier": "^2.2.1",
     "react-refresh": "^0.12.0",
     "style-loader": "^3.2.1",
