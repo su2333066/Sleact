@@ -1,34 +1,19 @@
-import React, { VFC, useCallback, useEffect, useRef } from 'react';
-import { ChatArea, MentionsTextarea, SendButton, Toolbox, Form, EachMention } from '@components/ChatBox/styles';
-import autosize from 'autosize';
-import { SuggestionDataItem, Mention } from 'react-mentions';
+import { ChatArea, Form, MentionsTextarea, SendButton, Toolbox, EachMention } from '@components/ChatBox/styles';
 import { IUser } from '@typings/db';
-import { useParams } from 'react-router';
-import useSWR from 'swr';
-import fetcher from '@utils/fetcher';
+import autosize from 'autosize';
 import gravatar from 'gravatar';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
+import { Mention, SuggestionDataItem } from 'react-mentions';
 
 interface Props {
-  chat: string;
   onSubmitForm: (e: any) => void;
+  chat?: string;
   onChangeChat: (e: any) => void;
-  placeholder?: string;
+  placeholder: string;
+  data?: IUser[];
 }
-
-const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
-  const { workspace } = useParams<{ workspace: string }>();
-
-  const {
-    data: userData,
-    error,
-    revalidate,
-    mutate,
-  } = useSWR<IUser | false>('/api/users', fetcher, { dedupingInterval: 2000 /* 2초 */ });
-
-  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
-
+const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, data }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   useEffect(() => {
     if (textareaRef.current) {
       autosize(textareaRef.current);
@@ -47,26 +32,25 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
     [onSubmitForm],
   );
 
-  const renderSuggestion = useCallback(
-    (
-      suggestion: SuggestionDataItem,
-      search: string,
-      highlightedDisplay: React.ReactNode,
-      index: number,
-      focus: boolean,
-    ): React.ReactNode => {
-      if (!memberData) return;
+  const renderUserSuggestion: (
+    suggestion: SuggestionDataItem,
+    search: string,
+    highlightedDisplay: React.ReactNode,
+    index: number,
+    focused: boolean,
+  ) => React.ReactNode = useCallback(
+    (member, search, highlightedDisplay, index, focus) => {
+      if (!data) {
+        return null;
+      }
       return (
         <EachMention focus={focus}>
-          <img
-            src={gravatar.url(memberData[index].email, { s: '20px', d: 'retro' })}
-            alt={memberData[index].nickname}
-          />
+          <img src={gravatar.url(data[index].email, { s: '20px', d: 'retro' })} alt={data[index].nickname} />
           <span>{highlightedDisplay}</span>
         </EachMention>
       );
     },
-    [memberData],
+    [data],
   );
 
   return (
@@ -76,7 +60,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
           id="editor-chat"
           value={chat}
           onChange={onChangeChat}
-          onKeyDown={onKeydownChat}
+          onKeyPress={onKeydownChat}
           placeholder={placeholder}
           inputRef={textareaRef}
           forceSuggestionsAboveCursor
@@ -84,15 +68,15 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
           <Mention
             appendSpaceOnAdd
             trigger="@"
-            data={memberData?.map((v) => ({ id: v.id, display: v.nickname })) || []}
-            renderSuggestion={renderSuggestion}
+            data={data?.map((v) => ({ id: v.id, display: v.nickname })) || []}
+            renderSuggestion={renderUserSuggestion}
           />
         </MentionsTextarea>
         <Toolbox>
           <SendButton
             className={
-              'c-button-unstyled c-icon_button c-icon_button--size_small c-wysiwyg_container__button c-wysiwyg_container__button--send' +
-              (chat?.trim() ? '' : ' c-wysiwyg_container__button--disabled c-button--disabled c-icon_button--default')
+              'c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button c-texty_input__button--send' +
+              (chat?.trim() ? '' : ' c-texty_input__button--disabled')
             }
             data-qa="texty_send_button"
             aria-label="Send message"

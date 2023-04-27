@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --env development",
-    "build": "cross-env NODE_ENV=production webpack",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "author": "GISU",
   "license": "MIT",
