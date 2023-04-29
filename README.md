@@ -5,8 +5,7 @@ sleact 채널 클론 코딩
 <h1>🏷️ sleact</h1>
 
 <div><center>
- <img src="https://user-images.githubusercontent.com/61695175/119512434-4389de00-bdae-11eb-88cf-59a1ef10310f.png" width="600" height="auto">
-</div></center>
+<img width="1280" alt="UI" src="https://user-images.githubusercontent.com/87399695/235292020-01ccd741-7bc1-46d5-b776-3ac671b9c303.png">
 
 ## Getting Started
 
